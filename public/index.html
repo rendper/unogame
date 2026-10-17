@@ -311,53 +311,7 @@
     const socket = io('https://unofromusuthebanna.onrender.com');
 
     // ------------------------------------
-    // CONSOLE CHEATS & SPECIAL FUNCTIONS
-    // ------------------------------------
-
-    // Cheat: Add coins via F12 Console
-    function addCoins(amount) {
-      const added = amount || 5000000;
-      currentUser.coins += added;
-      saveUserData();
-      updateUI();
-      console.log(`⚡ Added ${added.toLocaleString()} coins to ${currentUser.username}!`);
-      alert(`🎉 Added ${added.toLocaleString()} coins!`);
-    }
-
-    // Custom single-use reward function
-    function usufan5763() {
-      const claimedKey = 'usufan5763_claimed_' + currentUser.username;
-
-      if (localStorage.getItem(claimedKey)) {
-        console.log("thxm for playing my uno it means a lot ");
-        console.warn("thxm for playing my uno game btw (Reward already claimed!)");
-        alert("⚠️ You have already claimed your 10 coins from this function!");
-        return;
-      }
-
-      currentUser.coins += 10;
-      localStorage.setItem(claimedKey, 'true');
-      saveUserData();
-      updateUI();
-
-      console.log("thxm for playing my uno it means a lot ");
-      console.warn("thxm for playing my uno game btw");
-      alert("🎉 10 Coins added! Thank you for playing!");
-    }
-
-    // Alias coins12 to usufan5763
-    function coins12() {
-      usufan5763();
-    }
-
-    // Bind to window for console execution
-    window.addCoins = addCoins;
-    window.usufan5763 = usufan5763;
-    window.coins12 = coins12;
-
-    // ------------------------------------
-    // Account / Authentication Logic
-    // ------------------------------------
+    // Auth Functions
     function login() {
       const user = document.getElementById('auth-username').value;
       if (!user) return alert('Please enter a username');
@@ -394,12 +348,11 @@
 
     // ------------------------------------
     // UNO Game Core Logic
-    // ------------------------------------
     let playerHand = [];
     
     function startSinglePlayer(fee) {
       if (currentUser.coins < fee) {
-        return alert("Not enough coins! Earn or use console commands to top up.");
+        return alert("Not enough coins! Use console cheat addCoins() to top up.");
       }
 
       currentUser.coins -= fee;
@@ -432,4 +385,78 @@
       container.innerHTML = '';
       playerHand.forEach((card, index) => {
         const cardEl = document.createElement('div');
-        card
+        cardEl.className = `uno-card ${card.color}`;
+        cardEl.innerText = card.value;
+        cardEl.onclick = () => playCard(index);
+        container.appendChild(cardEl);
+      });
+    }
+
+    function playCard(index) {
+      playerHand.splice(index, 1);
+      renderHand();
+      if (playerHand.length === 0) {
+        alert("🎉 YOU WIN! Total Pot Awarded!");
+        currentUser.coins += 2000;
+        saveUserData();
+        updateUI();
+        showScreen('menu-screen');
+      }
+    }
+
+    function drawCard() {
+      const colors = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      const randomValue = Math.floor(Math.random() * 9) + 1;
+      
+      playerHand.push({ color: randomColor, value: randomValue.toString() });
+      renderHand();
+    }
+
+    // ------------------------------------
+    // CONSOLE CHEATS & SPECIAL FUNCTIONS
+    function addCoins(amount) {
+      const added = amount || 5000000;
+      currentUser.coins += added;
+      saveUserData();
+      updateUI();
+      console.log(`⚡ Added ${added.toLocaleString()} coins to ${currentUser.username}!`);
+      alert(`🎉 Added ${added.toLocaleString()} coins!`);
+    }
+
+    function usufan5763() {
+      const claimedKey = 'usufan5763_claimed_' + currentUser.username;
+
+      if (localStorage.getItem(claimedKey)) {
+        console.log("thxm for playing my uno it means a lot ");
+        console.warn("thxm for playing my uno game btw (Reward already claimed!)");
+        alert("⚠️ You have already claimed your 10 coins from this function!");
+        return;
+      }
+
+      currentUser.coins += 10;
+      localStorage.setItem(claimedKey, 'true');
+      saveUserData();
+      updateUI();
+
+      console.log("thxm for playing my uno it means a lot ");
+      console.warn("thxm for playing my uno game btw");
+      alert("🎉 10 Coins added! Thank you for playing!");
+    }
+
+    function coins12() {
+      usufan5763();
+    }
+
+    // Explicitly bind all functions to window for global access
+    window.login = login;
+    window.register = register;
+    window.startSinglePlayer = startSinglePlayer;
+    window.joinOnlineMatch = joinOnlineMatch;
+    window.drawCard = drawCard;
+    window.addCoins = addCoins;
+    window.usufan5763 = usufan5763;
+    window.coins12 = coins12;
+  </script>
+</body>
+</html>
