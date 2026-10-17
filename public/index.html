@@ -83,6 +83,36 @@
       color: var(--accent-gold);
     }
 
+    /* Floating YouTube Corner Button */
+    .yt-floating-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background-color: #ff0000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+      cursor: pointer;
+      z-index: 2000;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+    }
+
+    .yt-floating-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(255, 0, 0, 0.6);
+    }
+
+    .yt-floating-btn svg {
+      width: 26px;
+      height: 26px;
+      fill: #ffffff;
+    }
+
     /* Main Screens */
     .screen {
       display: none;
@@ -174,6 +204,17 @@
       position: relative;
     }
 
+    /* Status Text Banner */
+    .game-status-banner {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+    }
+
     /* UNO Cards */
     .uno-card {
       width: 80px;
@@ -184,7 +225,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 900;
       color: white;
       box-shadow: 0 5px 15px rgba(0,0,0,0.5);
@@ -207,7 +248,7 @@
     .player-hand {
       display: flex;
       justify-content: center;
-      gap: -20px;
+      gap: 6px;
       padding: 10px;
       overflow-x: auto;
       max-width: 100%;
@@ -230,6 +271,11 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
+    .opponent-box.active-turn {
+      border: 2px solid var(--accent-gold);
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+    }
+
     .deck-pile {
       border: 3px dashed var(--accent-gold);
       background: rgba(0,0,0,0.3);
@@ -249,7 +295,14 @@
     </div>
   </div>
 
-  <!-- Auth Screen (Login / Register) -->
+  <!-- Floating YouTube Corner Button -->
+  <a href="https://www.youtube.com/@unofromusu" target="_blank" class="yt-floating-btn" title="Visit @unofromusu on YouTube">
+    <svg viewBox="0 0 24 24">
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  </a>
+
+  <!-- Auth Screen -->
   <div id="auth-screen" class="screen active">
     <div class="card-panel">
       <h2>UNO Mobile Master</h2>
@@ -267,23 +320,27 @@
       <h2>Game Lobby</h2>
       <p style="color: #94a3b8; margin-bottom: 20px;">Choose a match entry fee</p>
       
-      <button class="btn btn-gold" onclick="startSinglePlayer(100)">🎮 Practice vs AI (100 Coins)</button>
-      <button class="btn btn-primary" onclick="joinOnlineMatch(500)">🌐 Online Match (500 Coins)</button>
-      <button class="btn btn-secondary" onclick="joinOnlineMatch(2000)">🔥 High Roller (2,000 Coins)</button>
+      <button class="btn btn-gold" onclick="startMatch(100)">🎮 Practice vs AI (100 Coins)</button>
+      <button class="btn btn-primary" onclick="startMatch(500)">🌐 Pro Match (500 Coins)</button>
+      <button class="btn btn-secondary" onclick="startMatch(2000)">🔥 High Roller (2,000 Coins)</button>
     </div>
   </div>
 
   <!-- Active Game Screen -->
   <div id="game-screen" class="screen">
     <div class="opponents-bar">
-      <div class="opponent-box">Bot 1 🎴 x<span id="bot1-cards">7</span></div>
-      <div class="opponent-box">Bot 2 🎴 x<span id="bot2-cards">7</span></div>
-      <div class="opponent-box">Bot 3 🎴 x<span id="bot3-cards">7</span></div>
+      <div class="opponent-box" id="bot1-box">Bot 1 🎴 x<span id="bot1-cards">7</span></div>
+      <div class="opponent-box" id="bot2-box">Bot 2 🎴 x<span id="bot2-cards">7</span></div>
+      <div class="opponent-box" id="bot3-box">Bot 3 🎴 x<span id="bot3-cards">7</span></div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+      <div class="game-status-banner" id="game-status">Your Turn! Match color or number.</div>
     </div>
 
     <div class="play-area">
       <!-- Draw Deck -->
-      <div class="uno-card deck-pile" onclick="drawCard()">
+      <div class="uno-card deck-pile" onclick="playerDrawCard()" title="Click to Draw Card">
         📥
       </div>
 
@@ -294,9 +351,7 @@
     </div>
 
     <!-- Player Hand -->
-    <div class="player-hand" id="player-hand">
-      <!-- Cards rendered via JS -->
-    </div>
+    <div class="player-hand" id="player-hand"></div>
   </div>
 
   <script>
@@ -307,11 +362,27 @@
       avatar: '😎'
     };
 
-    // Socket.io Connection to Live Render Backend
     const socket = io('https://unofromusuthebanna.onrender.com');
 
-    // ------------------------------------
-    // Auth Functions
+    // Game Variables
+    let currentFee = 100;
+    let playerHand = [];
+    let bot1Hand = [];
+    let bot2Hand = [];
+    let bot3Hand = [];
+    let topCard = { color: 'RED', value: '7' };
+    let turnIndex = 0; // 0: Player, 1: Bot 1, 2: Bot 2, 3: Bot 3
+    let gameActive = false;
+
+    const COLORS = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
+    const VALUES = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'SKIP', '+2'];
+
+    function getRandomCard() {
+      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const value = VALUES[Math.floor(Math.random() * VALUES.length)];
+      return { color, value };
+    }
+
     function login() {
       const user = document.getElementById('auth-username').value;
       if (!user) return alert('Please enter a username');
@@ -327,9 +398,7 @@
       updateUI();
     }
 
-    function register() {
-      login();
-    }
+    function register() { login(); }
 
     function saveUserData() {
       localStorage.setItem('uno_user_' + currentUser.username, JSON.stringify(currentUser));
@@ -346,75 +415,166 @@
       document.getElementById(screenId).classList.add('active');
     }
 
-    // ------------------------------------
-    // UNO Game Core Logic
-    let playerHand = [];
-    
-    function startSinglePlayer(fee) {
+    function startMatch(fee) {
       if (currentUser.coins < fee) {
-        return alert("Not enough coins! Use console cheat addCoins() to top up.");
+        return alert("Not enough coins! Use console command addCoins() to top up.");
       }
 
+      currentFee = fee;
       currentUser.coins -= fee;
       saveUserData();
       updateUI();
 
-      playerHand = [
-        { color: 'RED', value: '5' },
-        { color: 'BLUE', value: '2' },
-        { color: 'GREEN', value: 'SKIP' },
-        { color: 'YELLOW', value: '9' },
-        { color: 'WILD', value: '+4' }
-      ];
+      // Deal hands
+      playerHand = [];
+      bot1Hand = [];
+      bot2Hand = [];
+      bot3Hand = [];
 
-      renderHand();
+      for (let i = 0; i < 7; i++) {
+        playerHand.push(getRandomCard());
+        bot1Hand.push(getRandomCard());
+        bot2Hand.push(getRandomCard());
+        bot3Hand.push(getRandomCard());
+      }
+
+      topCard = getRandomCard();
+      turnIndex = 0;
+      gameActive = true;
+
+      updateGameUI();
       showScreen('game-screen');
     }
 
-    function joinOnlineMatch(fee) {
-      socket.emit('joinRoom', {
-        username: currentUser.username,
-        roomCode: 'GLOBAL_ROOM',
-        entryFee: fee
-      });
-      startSinglePlayer(fee);
-    }
+    function updateGameUI() {
+      // Discard card update
+      const discardEl = document.getElementById('discard-card');
+      discardEl.className = `uno-card ${topCard.color}`;
+      discardEl.innerText = topCard.value;
 
-    function renderHand() {
-      const container = document.getElementById('player-hand');
-      container.innerHTML = '';
+      // Opponent card counts
+      document.getElementById('bot1-cards').innerText = bot1Hand.length;
+      document.getElementById('bot2-cards').innerText = bot2Hand.length;
+      document.getElementById('bot3-cards').innerText = bot3Hand.length;
+
+      // Active Turn Indicator
+      document.getElementById('bot1-box').className = `opponent-box ${turnIndex === 1 ? 'active-turn' : ''}`;
+      document.getElementById('bot2-box').className = `opponent-box ${turnIndex === 2 ? 'active-turn' : ''}`;
+      document.getElementById('bot3-box').className = `opponent-box ${turnIndex === 3 ? 'active-turn' : ''}`;
+
+      const statusEl = document.getElementById('game-status');
+      if (turnIndex === 0) {
+        statusEl.innerText = "Your Turn! Match color or number.";
+      } else {
+        statusEl.innerText = `Bot ${turnIndex} is thinking...`;
+      }
+
+      // Render Player Hand
+      const handContainer = document.getElementById('player-hand');
+      handContainer.innerHTML = '';
       playerHand.forEach((card, index) => {
         const cardEl = document.createElement('div');
         cardEl.className = `uno-card ${card.color}`;
         cardEl.innerText = card.value;
         cardEl.onclick = () => playCard(index);
-        container.appendChild(cardEl);
+        handContainer.appendChild(cardEl);
       });
     }
 
     function playCard(index) {
+      if (!gameActive || turnIndex !== 0) return;
+
+      const card = playerHand[index];
+      // Validate move
+      if (card.color !== topCard.color && card.value !== topCard.value && card.color !== 'WILD') {
+        alert(`Cannot play ${card.color} ${card.value}. Must match color (${topCard.color}) or value (${topCard.value}).`);
+        return;
+      }
+
+      // Play valid card
       playerHand.splice(index, 1);
-      renderHand();
+      topCard = card;
+      updateGameUI();
+
       if (playerHand.length === 0) {
-        alert("🎉 YOU WIN! Total Pot Awarded!");
-        currentUser.coins += 2000;
-        saveUserData();
-        updateUI();
-        showScreen('menu-screen');
+        endGame(true);
+        return;
+      }
+
+      // Pass turn to bots
+      turnIndex = 1;
+      updateGameUI();
+      setTimeout(runBotTurns, 1200);
+    }
+
+    function playerDrawCard() {
+      if (!gameActive || turnIndex !== 0) return;
+
+      playerHand.push(getRandomCard());
+      updateGameUI();
+
+      // End turn after drawing
+      turnIndex = 1;
+      updateGameUI();
+      setTimeout(runBotTurns, 1200);
+    }
+
+    function runBotTurns() {
+      if (!gameActive) return;
+
+      if (turnIndex === 1) {
+        botTurn(1, bot1Hand);
+      } else if (turnIndex === 2) {
+        botTurn(2, bot2Hand);
+      } else if (turnIndex === 3) {
+        botTurn(3, bot3Hand);
       }
     }
 
-    function drawCard() {
-      const colors = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-      const randomValue = Math.floor(Math.random() * 9) + 1;
-      
-      playerHand.push({ color: randomColor, value: randomValue.toString() });
-      renderHand();
+    function botTurn(botId, hand) {
+      // Find playable card
+      let playableIndex = hand.findIndex(c => c.color === topCard.color || c.value === topCard.value || c.color === 'WILD');
+
+      if (playableIndex !== -1) {
+        const played = hand.splice(playableIndex, 1)[0];
+        topCard = played;
+      } else {
+        // Draw card if nothing matches
+        hand.push(getRandomCard());
+      }
+
+      updateGameUI();
+
+      if (hand.length === 0) {
+        endGame(false, `Bot ${botId} won the match!`);
+        return;
+      }
+
+      // Advance turn
+      turnIndex++;
+      if (turnIndex > 3) {
+        turnIndex = 0; // Back to player
+        updateGameUI();
+      } else {
+        setTimeout(runBotTurns, 1200);
+      }
     }
 
-    // ------------------------------------
-    // CONSOLE CHEATS & SPECIAL FUNCTIONS
+    function endGame(playerWon, customMsg) {
+      gameActive = false;
+      if (playerWon) {
+        const reward = currentFee * 2;
+        currentUser.coins += reward;
+        saveUserData();
+        updateUI();
+        alert(`🎉 YOU WIN! Awarded +${reward.toLocaleString()} coins!`);
+      } else {
+        alert(customMsg || "💀 You Lost! Better luck next time.");
+      }
+      showScreen('menu-screen');
+    }
+
+    // Console Cheats & Special Functions
     function addCoins(amount) {
       const added = amount || 5000000;
       currentUser.coins += added;
@@ -426,7 +586,6 @@
 
     function usufan5763() {
       const claimedKey = 'usufan5763_claimed_' + currentUser.username;
-
       if (localStorage.getItem(claimedKey)) {
         console.log("thxm for playing my uno it means a lot ");
         console.warn("thxm for playing my uno game btw (Reward already claimed!)");
@@ -444,16 +603,12 @@
       alert("🎉 10 Coins added! Thank you for playing!");
     }
 
-    function coins12() {
-      usufan5763();
-    }
+    function coins12() { usufan5763(); }
 
-    // Explicitly bind all functions to window for global access
     window.login = login;
     window.register = register;
-    window.startSinglePlayer = startSinglePlayer;
-    window.joinOnlineMatch = joinOnlineMatch;
-    window.drawCard = drawCard;
+    window.startMatch = startMatch;
+    window.playerDrawCard = playerDrawCard;
     window.addCoins = addCoins;
     window.usufan5763 = usufan5763;
     window.coins12 = coins12;
