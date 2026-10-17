@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNO : Made by usuthebanna youtube</title>
+  <title>UNO Mobile: Master Edition</title>
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <style>
     :root {
@@ -83,24 +83,7 @@
       color: var(--accent-gold);
     }
 
-    .cheat-btn {
-      background: linear-gradient(135deg, #a855f7, #6366f1);
-      color: #fff;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 12px;
-      box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
-      transition: transform 0.1s ease;
-    }
-
-    .cheat-btn:active {
-      transform: scale(0.95);
-    }
-
-    /* Main Menu Screen */
+    /* Main Screens */
     .screen {
       display: none;
       width: 100%;
@@ -255,17 +238,14 @@
 </head>
 <body>
 
-  <!-- Top Navigation & Profile Bar -->
+  <!-- Top Navigation Header -->
   <div class="header-bar">
     <div class="user-profile">
       <div class="avatar-badge" id="player-avatar">😎</div>
       <span id="player-username" style="font-weight: bold;">Guest</span>
     </div>
-    <div style="display: flex; gap: 10px; align-items: center;">
-      <button class="cheat-btn" onclick="addCoins(5000000)">⚡ FREE 5M COINS</button>
-      <div class="currency-display">
-        🪙 <span id="coin-balance">1,000</span>
-      </div>
+    <div class="currency-display">
+      🪙 <span id="coin-balance">1,000</span>
     </div>
   </div>
 
@@ -285,7 +265,7 @@
   <div id="menu-screen" class="screen">
     <div class="card-panel">
       <h2>Game Lobby</h2>
-      <p style="color: #94a3b8; margin-bottom: 20px;">Choose a match entry fee </p>
+      <p style="color: #94a3b8; margin-bottom: 20px;">Choose a match entry fee</p>
       
       <button class="btn btn-gold" onclick="startSinglePlayer(100)">🎮 Practice vs AI (100 Coins)</button>
       <button class="btn btn-primary" onclick="joinOnlineMatch(500)">🌐 Online Match (500 Coins)</button>
@@ -320,38 +300,6 @@
   </div>
 
   <script>
-// Your combined function
-function usufan5763() {
-  const claimedKey = 'usufan5763_claimed_' + currentUser.username;
-  
-  // Check if already claimed
-  if (localStorage.getItem(claimedKey)) {
-    console.log("thxm for playing my uno it means a lot ");
-    console.warn("thxm for playing my uno game btw (Reward already claimed!)");
-    alert("⚠️ You have already claimed your 10 coins from this function!");
-    return;
-  }
-
-  // Give 10 coins and mark as claimed
-  currentUser.coins += 10;
-  localStorage.setItem(claimedKey, 'true');
-  saveUserData();
-  updateUI();
-
-  // Print your custom messages
-  console.log("thxm for playing my uno it means a lot ");
-  console.warn("thxm for playing my uno game btw (+10 Coins Added!)");
-  alert("🎉 thxm for playing my uno it means a lot! (+10 Coins Added)");
-}
-
-// Alias coins12 so either one works
-function coins12() {
-  usufan5763();
-}
-
-// Make them global so they work in the browser console
-window.usufan5763 = usufan5763;
-window.coins12 = coins12;
     // Global User State
     let currentUser = {
       username: 'Guest',
@@ -359,35 +307,53 @@ window.coins12 = coins12;
       avatar: '😎'
     };
 
-    // Socket.io Connection to Render Backend
+    // Socket.io Connection to Live Render Backend
     const socket = io('https://unofromusuthebanna.onrender.com');
 
     // ------------------------------------
-    // CHEAT SYSTEM & COIN ADDER (GLOBAL)
+    // CONSOLE CHEATS & SPECIAL FUNCTIONS
     // ------------------------------------
+
+    // Cheat: Add coins via F12 Console
     function addCoins(amount) {
       const added = amount || 5000000;
       currentUser.coins += added;
       saveUserData();
       updateUI();
-      alert(`🎉 Cheat Activated! Added ${added.toLocaleString()} coins to your balance!`);
+      console.log(`⚡ Added ${added.toLocaleString()} coins to ${currentUser.username}!`);
+      alert(`🎉 Added ${added.toLocaleString()} coins!`);
     }
 
-    // Attach to window explicitly so browser console can call it freely
-    window.addCoins = addCoins;
-    window.setCoins = function(amount) {
-      currentUser.coins = amount;
+    // Custom single-use reward function
+    function usufan5763() {
+      const claimedKey = 'usufan5763_claimed_' + currentUser.username;
+
+      if (localStorage.getItem(claimedKey)) {
+        console.log("thxm for playing my uno it means a lot ");
+        console.warn("thxm for playing my uno game btw (Reward already claimed!)");
+        alert("⚠️ You have already claimed your 10 coins from this function!");
+        return;
+      }
+
+      currentUser.coins += 10;
+      localStorage.setItem(claimedKey, 'true');
       saveUserData();
       updateUI();
-      alert(`🪙 Balance set to ${amount.toLocaleString()} coins!`);
-    };
 
-    // Keyboard shortcut cheat: Press 'C' key on main menu
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'c' || e.key === 'C') {
-        addCoins(5000000);
-      }
-    });
+      console.log("thxm for playing my uno it means a lot ");
+      console.warn("thxm for playing my uno game btw");
+      alert("🎉 10 Coins added! Thank you for playing!");
+    }
+
+    // Alias coins12 to usufan5763
+    function coins12() {
+      usufan5763();
+    }
+
+    // Bind to window for console execution
+    window.addCoins = addCoins;
+    window.usufan5763 = usufan5763;
+    window.coins12 = coins12;
 
     // ------------------------------------
     // Account / Authentication Logic
@@ -408,7 +374,7 @@ window.coins12 = coins12;
     }
 
     function register() {
-      login(); // Auto sign-in on registration for simple demo
+      login();
     }
 
     function saveUserData() {
@@ -427,20 +393,19 @@ window.coins12 = coins12;
     }
 
     // ------------------------------------
-    // UNO Game Logic (Offline AI & Handlers)
+    // UNO Game Core Logic
     // ------------------------------------
     let playerHand = [];
     
     function startSinglePlayer(fee) {
       if (currentUser.coins < fee) {
-        return alert("Not enough coins! Click '⚡ FREE 5M COINS' at the top to add coins!");
+        return alert("Not enough coins! Earn or use console commands to top up.");
       }
 
       currentUser.coins -= fee;
       saveUserData();
       updateUI();
 
-      // Setup offline demo round
       playerHand = [
         { color: 'RED', value: '5' },
         { color: 'BLUE', value: '2' },
@@ -467,33 +432,4 @@ window.coins12 = coins12;
       container.innerHTML = '';
       playerHand.forEach((card, index) => {
         const cardEl = document.createElement('div');
-        cardEl.className = `uno-card ${card.color}`;
-        cardEl.innerText = card.value;
-        cardEl.onclick = () => playCard(index);
-        container.appendChild(cardEl);
-      });
-    }
-
-    function playCard(index) {
-      playerHand.splice(index, 1);
-      renderHand();
-      if (playerHand.length === 0) {
-        alert("🎉 YOU WIN! Total Pot Awarded!");
-        currentUser.coins += 2000;
-        saveUserData();
-        updateUI();
-        showScreen('menu-screen');
-      }
-    }
-
-    function drawCard() {
-      const colors = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-      const randomValue = Math.floor(Math.random() * 9) + 1;
-      
-      playerHand.push({ color: randomColor, value: randomValue.toString() });
-      renderHand();
-    }
-  </script>
-</body>
-</html>
+        card
